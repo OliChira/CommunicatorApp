@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, TouchableOpacity, Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ApprovalScreen from './ApprovalScreen';
@@ -12,27 +12,42 @@ const Stack = createNativeStackNavigator();
 
 function ApprovalStack({ route }) {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerBackTitleVisible: false,
+        headerBackTitle: '',
+        gestureEnabled: true
+      }}>
       <Stack.Screen
         name="ApprovalMain"
         component={ApprovalScreen}
         options={{
-          title: 'Approvals',
+          title: '',
           headerStyle: { backgroundColor: '#007bff' },
           headerTintColor: '#fff',
           headerTitleStyle: { fontWeight: 'bold' },
-          headerBackTitleVisible: false
+          headerBackTitleVisible: false,
+
         }}
       />
       <Stack.Screen
         name="RequestDetail"
         component={RequestDetailScreen}
-        options={{
+        options={({ navigation }) => ({
           title: 'Request Details',
           headerStyle: { backgroundColor: '#007bff' },
           headerTintColor: '#fff',
-          headerTitleStyle: { fontWeight: 'bold' }
-        }}
+          headerTitleStyle: { fontWeight: 'bold' },
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={{ marginLeft: Platform.OS === 'ios' ? 2 : 4 }}
+            >
+              <Text style={{ color: '#fff', fontSize: 40, paddingHorizontal: 4 }}>‹</Text>
+            </TouchableOpacity>
+          ),
+          headerBackVisible: false
+        })}
       />
     </Stack.Navigator>
   );
@@ -40,7 +55,12 @@ function ApprovalStack({ route }) {
 
 function HistoryStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerBackTitleVisible: false,
+        headerBackTitle: '',
+        gestureEnabled: true
+      }}>
       <Stack.Screen
         name="HistoryMain"
         component={HistoryScreen}
@@ -55,12 +75,21 @@ function HistoryStack() {
       <Stack.Screen
         name="RequestDetail"
         component={RequestDetailScreen}
-        options={{
+        options={({ navigation }) => ({
           title: 'Request Details',
           headerStyle: { backgroundColor: '#007bff' },
           headerTintColor: '#fff',
-          headerTitleStyle: { fontWeight: 'bold' }
-        }}
+          headerTitleStyle: { fontWeight: 'bold' },
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={{ marginLeft: Platform.OS === 'ios' ? 2 : 4 }}
+            >
+              <Text style={{ color: '#fff', fontSize: 40, paddingHorizontal: 4 }}>‹</Text>
+            </TouchableOpacity>
+          ),
+          headerBackVisible: false
+        })}
       />
     </Stack.Navigator>
   );
@@ -68,7 +97,12 @@ function HistoryStack() {
 
 function AccountStack({ route }) {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerBackTitleVisible: false,
+        headerBackTitle: '',
+        gestureEnabled: true
+      }}>
       <Stack.Screen
         name="AccountMain"
         component={AccountScreen}
