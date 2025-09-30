@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
+import Card from '../components/Card';
+import { theme } from '../styles/theme';
 
 const mockHistory = [
   {
@@ -93,7 +95,7 @@ export default function HistoryScreen({ navigation }) {
     : history.filter(item => item.status === filter);
 
   const getStatusColor = (status) => {
-    return status === 'Approved' ? '#28a745' : '#dc3545';
+    return status === 'Approved' ? theme.colors.success.main : theme.colors.error.main;
   };
 
   const getStatusIcon = (status) => {
@@ -113,45 +115,44 @@ export default function HistoryScreen({ navigation }) {
   };
 
   const renderHistoryItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.historyCard}
-      onPress={() => handleItemPress(item)}
-      activeOpacity={0.7}
-    >
-      <View style={styles.cardHeader}>
-        <Text style={styles.title}>{item.title}</Text>
-        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
-          <Text style={styles.statusIcon}>{getStatusIcon(item.status)}</Text>
-          <Text style={styles.statusText}>{item.status}</Text>
+    <Card style={styles.historyCard} padding="lg">
+      <TouchableOpacity
+        onPress={() => handleItemPress(item)}
+        activeOpacity={0.7}
+      >
+        <View style={styles.cardHeader}>
+          <Text style={styles.title}>{item.title}</Text>
+          <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
+            <Text style={styles.statusIcon}>{getStatusIcon(item.status)}</Text>
+            <Text style={styles.statusText}>{item.status}</Text>
+          </View>
         </View>
-      </View>
 
-      <Text style={styles.description}>{truncateText(item.description)}</Text>
+        <Text style={styles.description}>{truncateText(item.description)}</Text>
 
-      <View style={styles.detailsRow}>
-        <Text style={styles.detailLabel}>Requester:</Text>
-        <Text style={styles.detailValue}>{item.requester}</Text>
-      </View>
+        <View style={styles.detailsContainer}>
+          <View style={styles.detailsRow}>
+            <Text style={styles.detailLabel}>Requester</Text>
+            <Text style={styles.detailValue}>{item.requester}</Text>
+          </View>
 
-      <View style={styles.detailsRow}>
-        <Text style={styles.detailLabel}>Amount:</Text>
-        <Text style={[styles.detailValue, styles.amount]}>{item.amount}</Text>
-      </View>
+          <View style={styles.detailsRow}>
+            <Text style={styles.detailLabel}>Amount</Text>
+            <Text style={[styles.detailValue, styles.amount]}>{item.amount}</Text>
+          </View>
 
-      <View style={styles.detailsRow}>
-        <Text style={styles.detailLabel}>Requested:</Text>
-        <Text style={styles.detailValue}>{item.date}</Text>
-      </View>
+          <View style={styles.detailsRow}>
+            <Text style={styles.detailLabel}>Requested</Text>
+            <Text style={styles.detailValue}>{item.date}</Text>
+          </View>
 
-      <View style={styles.detailsRow}>
-        <Text style={styles.detailLabel}>Processed:</Text>
-        <Text style={styles.detailValue}>{item.processedDate}</Text>
-      </View>
-
-      <View style={styles.tapHint}>
-        <Text style={styles.tapHintText}>Tap to view details</Text>
-      </View>
-    </TouchableOpacity>
+          <View style={styles.detailsRow}>
+            <Text style={styles.detailLabel}>Processed</Text>
+            <Text style={styles.detailValue}>{item.processedDate}</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    </Card>
   );
 
   const renderFilterButton = (filterType) => (
@@ -172,7 +173,9 @@ export default function HistoryScreen({ navigation }) {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor={theme.colors.primary.main} />
+
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Approval History</Text>
         <Text style={styles.headerSubtitle}>
@@ -193,140 +196,128 @@ export default function HistoryScreen({ navigation }) {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContainer}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa'
+    backgroundColor: theme.colors.background.secondary
   },
   header: {
-    backgroundColor: '#fff',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
+    backgroundColor: theme.colors.background.primary,
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef'
+    borderBottomColor: theme.colors.border.light,
+    ...theme.shadows.sm
   },
   headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#212529'
+    fontSize: theme.typography.sizes.xxl,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.text.primary
   },
   headerSubtitle: {
-    fontSize: 14,
-    color: '#6c757d',
-    marginTop: 4
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.text.secondary,
+    marginTop: theme.spacing.xs
   },
   filterContainer: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
+    backgroundColor: theme.colors.background.primary,
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef'
+    borderBottomColor: theme.colors.border.light
   },
   filterButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    marginRight: 8,
-    backgroundColor: '#f8f9fa',
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
+    borderRadius: theme.borderRadius.full,
+    marginRight: theme.spacing.sm,
+    backgroundColor: theme.colors.background.tertiary,
     borderWidth: 1,
-    borderColor: '#dee2e6'
+    borderColor: theme.colors.border.medium
   },
   activeFilterButton: {
-    backgroundColor: '#007bff',
-    borderColor: '#007bff'
+    backgroundColor: theme.colors.primary.main,
+    borderColor: theme.colors.primary.main
   },
   filterButtonText: {
-    fontSize: 14,
-    color: '#495057',
-    fontWeight: '500'
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.text.secondary,
+    fontWeight: theme.typography.weights.medium
   },
   activeFilterButtonText: {
-    color: '#fff'
+    color: theme.colors.text.inverse
   },
   listContainer: {
-    padding: 16
+    padding: theme.spacing.md
   },
   historyCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4
+    marginBottom: theme.spacing.md
   },
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 8
+    marginBottom: theme.spacing.sm
   },
   title: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#212529',
+    fontSize: theme.typography.sizes.lg,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.text.primary,
     flex: 1,
-    marginRight: 8
+    marginRight: theme.spacing.sm
   },
   statusBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.borderRadius.full
   },
   statusIcon: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: 'bold',
-    marginRight: 4
+    color: theme.colors.text.inverse,
+    fontSize: theme.typography.sizes.xs,
+    fontWeight: theme.typography.weights.bold,
+    marginRight: theme.spacing.xs
   },
   statusText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: 'bold'
+    color: theme.colors.text.inverse,
+    fontSize: theme.typography.sizes.xs,
+    fontWeight: theme.typography.weights.bold,
+    textTransform: 'uppercase'
   },
   description: {
-    fontSize: 14,
-    color: '#6c757d',
-    marginBottom: 12,
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.text.secondary,
+    marginBottom: theme.spacing.md,
     lineHeight: 20
+  },
+  detailsContainer: {
+    marginBottom: theme.spacing.sm
   },
   detailsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 6
+    marginBottom: theme.spacing.xs
   },
   detailLabel: {
-    fontSize: 14,
-    color: '#495057',
-    fontWeight: '500'
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.text.secondary,
+    fontWeight: theme.typography.weights.medium,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5
   },
   detailValue: {
-    fontSize: 14,
-    color: '#212529'
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.text.primary,
+    fontWeight: theme.typography.weights.medium
   },
   amount: {
-    fontWeight: 'bold',
-    color: '#28a745'
-  },
-  tapHint: {
-    marginTop: 8,
-    paddingTop: 8,
-    borderTopWidth: 1,
-    borderTopColor: '#f8f9fa',
-    alignItems: 'center'
-  },
-  tapHintText: {
-    fontSize: 12,
-    color: '#6c757d',
-    fontStyle: 'italic'
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.success.main
   }
 });

@@ -1,5 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, SafeAreaView, StatusBar } from 'react-native';
+import Card from '../components/Card';
+import Button from '../components/Button';
+import { theme } from '../styles/theme';
 
 export default function RequestDetailScreen({ route, navigation }) {
   const { item, showActions = false } = route.params;
@@ -43,15 +46,15 @@ export default function RequestDetailScreen({ route, navigation }) {
 
   const getPriorityColor = (priority) => {
     switch (priority) {
-      case 'High': return '#ff4757';
-      case 'Medium': return '#ffa502';
-      case 'Low': return '#2ed573';
-      default: return '#57606f';
+      case 'High': return theme.colors.error.main;
+      case 'Medium': return theme.colors.warning.main;
+      case 'Low': return theme.colors.success.main;
+      default: return theme.colors.secondary.main;
     }
   };
 
   const getStatusColor = (status) => {
-    return status === 'Approved' ? '#28a745' : '#dc3545';
+    return status === 'Approved' ? theme.colors.success.main : theme.colors.error.main;
   };
 
   const getStatusIcon = (status) => {
@@ -59,16 +62,16 @@ export default function RequestDetailScreen({ route, navigation }) {
   };
 
   const renderDetailSection = (title, content, isImportant = false) => (
-    <View style={styles.detailSection}>
+    <Card style={styles.detailSection} padding="lg">
       <Text style={styles.sectionTitle}>{title}</Text>
       <Text style={[styles.sectionContent, isImportant && styles.importantContent]}>
         {content}
       </Text>
-    </View>
+    </Card>
   );
 
   const renderAdditionalInfo = () => (
-    <View style={styles.additionalInfoContainer}>
+    <Card style={styles.additionalInfoContainer} padding="lg">
       <Text style={styles.additionalInfoTitle}>Request Information</Text>
 
       <View style={styles.infoGrid}>
@@ -135,15 +138,15 @@ export default function RequestDetailScreen({ route, navigation }) {
           </>
         )}
       </View>
-    </View>
+    </Card>
   );
 
   const renderTimeline = () => (
-    <View style={styles.timelineContainer}>
+    <Card style={styles.timelineContainer} padding="lg">
       <Text style={styles.timelineTitle}>Request Timeline</Text>
 
       <View style={styles.timelineItem}>
-        <View style={[styles.timelineDot, { backgroundColor: '#007bff' }]} />
+        <View style={[styles.timelineDot, { backgroundColor: theme.colors.primary.main }]} />
         <View style={styles.timelineContent}>
           <Text style={styles.timelineLabel}>Request Submitted</Text>
           <Text style={styles.timelineDate}>{item.date}</Text>
@@ -156,7 +159,7 @@ export default function RequestDetailScreen({ route, navigation }) {
       {!showActions && (
         <>
           <View style={styles.timelineItem}>
-            <View style={[styles.timelineDot, { backgroundColor: '#ffc107' }]} />
+            <View style={[styles.timelineDot, { backgroundColor: theme.colors.warning.main }]} />
             <View style={styles.timelineContent}>
               <Text style={styles.timelineLabel}>Under Review</Text>
               <Text style={styles.timelineDate}>
@@ -183,7 +186,7 @@ export default function RequestDetailScreen({ route, navigation }) {
 
       {showActions && (
         <View style={styles.timelineItem}>
-          <View style={[styles.timelineDot, { backgroundColor: '#ffc107' }]} />
+          <View style={[styles.timelineDot, { backgroundColor: theme.colors.warning.main }]} />
           <View style={styles.timelineContent}>
             <Text style={styles.timelineLabel}>Pending Review</Text>
             <Text style={styles.timelineDate}>Current</Text>
@@ -193,13 +196,13 @@ export default function RequestDetailScreen({ route, navigation }) {
           </View>
         </View>
       )}
-    </View>
+    </Card>
   );
 
   const renderSpecificDetails = () => {
     if (item.title.includes('Travel')) {
       return (
-        <View style={styles.additionalInfoContainer}>
+        <Card style={styles.additionalInfoContainer} padding="lg">
           <Text style={styles.additionalInfoTitle}>Travel Details</Text>
           <Text style={styles.sectionContent}>
             • Destination: New York, NY{'\n'}
@@ -209,13 +212,13 @@ export default function RequestDetailScreen({ route, navigation }) {
             • Flight: Round trip from San Francisco{'\n'}
             • Meals: $75/day allowance included
           </Text>
-        </View>
+        </Card>
       );
     }
 
     if (item.title.includes('Software')) {
       return (
-        <View style={styles.additionalInfoContainer}>
+        <Card style={styles.additionalInfoContainer} padding="lg">
           <Text style={styles.additionalInfoTitle}>License Details</Text>
           <Text style={styles.sectionContent}>
             • License Type: Annual subscription{'\n'}
@@ -225,13 +228,13 @@ export default function RequestDetailScreen({ route, navigation }) {
             • Support: 24/7 premium support included{'\n'}
             • Training: Online training modules included
           </Text>
-        </View>
+        </Card>
       );
     }
 
     if (item.title.includes('Equipment')) {
       return (
-        <View style={styles.additionalInfoContainer}>
+        <Card style={styles.additionalInfoContainer} padding="lg">
           <Text style={styles.additionalInfoTitle}>Equipment Specifications</Text>
           <Text style={styles.sectionContent}>
             • Model: MacBook Pro 16-inch{'\n'}
@@ -241,7 +244,7 @@ export default function RequestDetailScreen({ route, navigation }) {
             • Warranty: 3-year AppleCare+{'\n'}
             • Delivery: Express shipping included
           </Text>
-        </View>
+        </Card>
       );
     }
 
@@ -249,8 +252,19 @@ export default function RequestDetailScreen({ route, navigation }) {
   };
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor={theme.colors.background.secondary} />
+
       <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.backButtonText}>‹</Text>
+          <Text style={styles.backButtonLabel}>Back</Text>
+        </TouchableOpacity>
+
         <View style={styles.titleContainer}>
           <Text style={styles.title}>{item.title}</Text>
 
@@ -269,6 +283,8 @@ export default function RequestDetailScreen({ route, navigation }) {
         </View>
       </View>
 
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+
       <View style={styles.content}>
         {renderDetailSection('Description', item.description)}
         {renderDetailSection('Amount', item.amount, true)}
@@ -282,185 +298,194 @@ export default function RequestDetailScreen({ route, navigation }) {
 
         {showActions && (
           <View style={styles.actionSection}>
-            <TouchableOpacity
-              style={[styles.actionButton, styles.approveButton]}
+            <Button
+              title="✓ Approve Request"
+              variant="success"
+              size="lg"
               onPress={() => handleApproval('Approve')}
-            >
-              <Text style={styles.actionButtonText}>✓ Approve Request</Text>
-            </TouchableOpacity>
+              style={styles.actionButton}
+            />
 
-            <TouchableOpacity
-              style={[styles.actionButton, styles.rejectButton]}
+            <Button
+              title="✗ Reject Request"
+              variant="error"
+              size="lg"
               onPress={() => handleApproval('Reject')}
-            >
-              <Text style={styles.actionButtonText}>✗ Reject Request</Text>
-            </TouchableOpacity>
+              style={styles.actionButton}
+            />
           </View>
         )}
 
         {!showActions && item.status === 'Rejected' && (
           <View style={styles.actionSection}>
-            <TouchableOpacity
-              style={styles.resubmitButton}
+            <Button
+              title="Create Similar Request"
+              variant="primary"
+              size="lg"
               onPress={handleResubmit}
-            >
-              <Text style={styles.resubmitButtonText}>🔄 Create Similar Request</Text>
-            </TouchableOpacity>
+              style={styles.actionButton}
+            />
           </View>
         )}
 
         {!showActions && item.status === 'Approved' && (
-          <View style={styles.statusSection}>
+          <Card style={styles.statusSection} padding="lg">
             <View style={styles.successBadge}>
               <Text style={styles.successText}>✓ This request has been approved and processed</Text>
             </View>
-          </View>
+          </Card>
         )}
       </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa'
+    backgroundColor: theme.colors.background.secondary
   },
   header: {
-    backgroundColor: '#fff',
-    paddingHorizontal: 20,
-    paddingVertical: 20,
+    backgroundColor: theme.colors.background.primary,
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef'
+    borderBottomColor: theme.colors.border.light,
+    ...theme.shadows.sm
+  },
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: theme.spacing.md,
+    paddingVertical: theme.spacing.xs
+  },
+  backButtonText: {
+    fontSize: 28,
+    color: theme.colors.primary.main,
+    marginRight: theme.spacing.xs
+  },
+  backButtonLabel: {
+    fontSize: theme.typography.sizes.md,
+    color: theme.colors.primary.main,
+    fontWeight: theme.typography.weights.medium
   },
   titleContainer: {
-    marginBottom: 12
+    marginBottom: theme.spacing.sm
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#212529',
-    marginBottom: 12,
+    fontSize: theme.typography.sizes.xxl,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.text.primary,
+    marginBottom: theme.spacing.md,
     lineHeight: 30
   },
   priorityBadge: {
     alignSelf: 'flex-start',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.borderRadius.full
   },
   priorityText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: 'bold'
+    color: theme.colors.text.inverse,
+    fontSize: theme.typography.sizes.sm,
+    fontWeight: theme.typography.weights.bold,
+    textTransform: 'uppercase'
   },
   statusBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'flex-start',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
+    borderRadius: theme.borderRadius.full,
+    minWidth: 100
   },
   statusIcon: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: 'bold',
-    marginRight: 6
+    color: theme.colors.text.inverse,
+    fontSize: theme.typography.sizes.xs,
+    fontWeight: theme.typography.weights.bold,
+    marginRight: theme.spacing.xs
   },
   statusText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: 'bold'
+    color: theme.colors.text.inverse,
+    fontSize: theme.typography.sizes.xs,
+    fontWeight: theme.typography.weights.bold,
+    textTransform: 'uppercase',
+    flexShrink: 0
+  },
+  scrollView: {
+    flex: 1
   },
   content: {
-    padding: 20
+    padding: theme.spacing.lg
   },
   detailSection: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4
+    marginBottom: theme.spacing.md
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#495057',
-    marginBottom: 8
+    fontSize: theme.typography.sizes.md,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.text.secondary,
+    marginBottom: theme.spacing.sm,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5
   },
   sectionContent: {
-    fontSize: 16,
-    color: '#212529',
-    lineHeight: 24
+    fontSize: theme.typography.sizes.md,
+    color: theme.colors.text.primary,
+    lineHeight: 24,
+    fontWeight: theme.typography.weights.medium
   },
   importantContent: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#28a745'
+    fontSize: theme.typography.sizes.xl,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.success.main
   },
   additionalInfoContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4
+    marginBottom: theme.spacing.md
   },
   additionalInfoTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#212529',
-    marginBottom: 16
+    fontSize: theme.typography.sizes.lg,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.text.primary,
+    marginBottom: theme.spacing.md
   },
   infoGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginHorizontal: -8
+    marginHorizontal: -theme.spacing.xs
   },
   infoItem: {
     width: '50%',
-    paddingHorizontal: 8,
-    marginBottom: 16
+    paddingHorizontal: theme.spacing.xs,
+    marginBottom: theme.spacing.md
   },
   infoLabel: {
-    fontSize: 14,
-    color: '#6c757d',
-    fontWeight: '500',
-    marginBottom: 4
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.text.secondary,
+    fontWeight: theme.typography.weights.medium,
+    marginBottom: theme.spacing.xs,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5
   },
   infoValue: {
-    fontSize: 16,
-    color: '#212529',
-    fontWeight: '600'
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.text.primary,
+    fontWeight: theme.typography.weights.semibold
   },
   timelineContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4
+    marginBottom: theme.spacing.md
   },
   timelineTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#212529',
-    marginBottom: 16
+    fontSize: theme.typography.sizes.lg,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.text.primary,
+    marginBottom: theme.spacing.md
   },
   timelineItem: {
     flexDirection: 'row',
-    marginBottom: 16,
+    marginBottom: theme.spacing.md,
     alignItems: 'flex-start'
   },
   timelineDot: {
@@ -468,83 +493,49 @@ const styles = StyleSheet.create({
     height: 12,
     borderRadius: 6,
     marginTop: 4,
-    marginRight: 12
+    marginRight: theme.spacing.sm
   },
   timelineContent: {
     flex: 1
   },
   timelineLabel: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#212529',
+    fontSize: theme.typography.sizes.md,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.text.primary,
     marginBottom: 2
   },
   timelineDate: {
-    fontSize: 14,
-    color: '#6c757d',
-    marginBottom: 4
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.text.secondary,
+    marginBottom: theme.spacing.xs
   },
   timelineDescription: {
-    fontSize: 14,
-    color: '#495057',
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.text.secondary,
     lineHeight: 20
   },
   actionSection: {
-    marginTop: 20,
-    gap: 12
+    marginTop: theme.spacing.xl,
+    gap: theme.spacing.sm
   },
   actionButton: {
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4
-  },
-  approveButton: {
-    backgroundColor: '#28a745'
-  },
-  rejectButton: {
-    backgroundColor: '#dc3545'
-  },
-  actionButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold'
-  },
-  resubmitButton: {
-    backgroundColor: '#007bff',
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4
-  },
-  resubmitButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold'
+    width: '100%'
   },
   statusSection: {
-    marginTop: 20
+    marginTop: theme.spacing.xl
   },
   successBadge: {
-    backgroundColor: '#d4edda',
-    borderColor: '#c3e6cb',
+    backgroundColor: theme.colors.success.light + '20',
+    borderColor: theme.colors.success.light,
     borderWidth: 1,
-    borderRadius: 8,
-    padding: 16,
+    borderRadius: theme.borderRadius.md,
+    padding: theme.spacing.md,
     alignItems: 'center'
   },
   successText: {
-    color: '#155724',
-    fontSize: 16,
-    fontWeight: '600',
+    color: theme.colors.success.dark,
+    fontSize: theme.typography.sizes.md,
+    fontWeight: theme.typography.weights.semibold,
     textAlign: 'center'
   }
 });

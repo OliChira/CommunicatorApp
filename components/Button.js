@@ -132,6 +132,9 @@ const styles = StyleSheet.create({
   success: {
     backgroundColor: theme.colors.success.main
   },
+  error: {
+    backgroundColor: theme.colors.error.main
+  },
 
   disabled: {
     backgroundColor: theme.colors.secondary.light,

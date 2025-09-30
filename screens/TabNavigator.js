@@ -6,6 +6,8 @@ import ApprovalScreen from './ApprovalScreen';
 import HistoryScreen from './HistoryScreen';
 import AccountScreen from './AccountScreen';
 import RequestDetailScreen from './RequestDetailScreen';
+import TabIcon from '../components/TabIcon';
+import { theme } from '../styles/theme';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -22,32 +24,15 @@ function ApprovalStack({ route }) {
         name="ApprovalMain"
         component={ApprovalScreen}
         options={{
-          title: '',
-          headerStyle: { backgroundColor: '#007bff' },
-          headerTintColor: '#fff',
-          headerTitleStyle: { fontWeight: 'bold' },
-          headerBackTitleVisible: false,
-
+          headerShown: false
         }}
       />
       <Stack.Screen
         name="RequestDetail"
         component={RequestDetailScreen}
-        options={({ navigation }) => ({
-          title: 'Request Details',
-          headerStyle: { backgroundColor: '#007bff' },
-          headerTintColor: '#fff',
-          headerTitleStyle: { fontWeight: 'bold' },
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              style={{ marginLeft: Platform.OS === 'ios' ? 2 : 4 }}
-            >
-              <Text style={{ color: '#fff', fontSize: 40, paddingHorizontal: 4 }}>‹</Text>
-            </TouchableOpacity>
-          ),
-          headerBackVisible: false
-        })}
+        options={{
+          headerShown: false
+        }}
       />
     </Stack.Navigator>
   );
@@ -65,31 +50,15 @@ function HistoryStack() {
         name="HistoryMain"
         component={HistoryScreen}
         options={{
-          title: 'History',
-          headerStyle: { backgroundColor: '#007bff' },
-          headerTintColor: '#fff',
-          headerTitleStyle: { fontWeight: 'bold' },
-          headerBackTitleVisible: false
+          headerShown: false
         }}
       />
       <Stack.Screen
         name="RequestDetail"
         component={RequestDetailScreen}
-        options={({ navigation }) => ({
-          title: 'Request Details',
-          headerStyle: { backgroundColor: '#007bff' },
-          headerTintColor: '#fff',
-          headerTitleStyle: { fontWeight: 'bold' },
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              style={{ marginLeft: Platform.OS === 'ios' ? 2 : 4 }}
-            >
-              <Text style={{ color: '#fff', fontSize: 40, paddingHorizontal: 4 }}>‹</Text>
-            </TouchableOpacity>
-          ),
-          headerBackVisible: false
-        })}
+        options={{
+          headerShown: false
+        }}
       />
     </Stack.Navigator>
   );
@@ -108,11 +77,7 @@ function AccountStack({ route }) {
         component={AccountScreen}
         initialParams={{ userInfo: route.params?.userInfo }}
         options={{
-          title: 'Account',
-          headerStyle: { backgroundColor: '#007bff' },
-          headerTintColor: '#fff',
-          headerTitleStyle: { fontWeight: 'bold' },
-          headerBackTitleVisible: false
+          headerShown: false
         }}
       />
     </Stack.Navigator>
@@ -126,24 +91,20 @@ export default function TabNavigator({ route }) {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#007bff',
-        tabBarInactiveTintColor: '#6c757d',
+        tabBarActiveTintColor: theme.colors.primary.main,
+        tabBarInactiveTintColor: theme.colors.secondary.main,
         tabBarStyle: {
-          backgroundColor: '#fff',
-          borderTopColor: '#e9ecef',
+          backgroundColor: theme.colors.background.primary,
+          borderTopColor: theme.colors.border.light,
           borderTopWidth: 1,
-          elevation: 8,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: -2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 4,
+          ...theme.shadows.lg,
           paddingBottom: 12,
           paddingTop: 12,
           height: 85
         },
         tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '600',
+          fontSize: theme.typography.sizes.xs,
+          fontWeight: theme.typography.weights.semibold,
           marginTop: 4
         },
         tabBarIconStyle: {
@@ -156,8 +117,8 @@ export default function TabNavigator({ route }) {
         component={ApprovalStack}
         options={{
           tabBarLabel: 'Approvals',
-          tabBarIcon: ({ color, size }) => (
-            <TabIcon icon="📝" color={color} size={size} />
+          tabBarIcon: ({ focused, size }) => (
+            <TabIcon name="approvals" focused={focused} size={size} />
           ),
           tabBarBadge: 5
         }}
@@ -167,8 +128,8 @@ export default function TabNavigator({ route }) {
         component={HistoryStack}
         options={{
           tabBarLabel: 'History',
-          tabBarIcon: ({ color, size }) => (
-            <TabIcon icon="📋" color={color} size={size} />
+          tabBarIcon: ({ focused, size }) => (
+            <TabIcon name="history" focused={focused} size={size} />
           )
         }}
       />
@@ -178,8 +139,8 @@ export default function TabNavigator({ route }) {
         initialParams={{ userInfo }}
         options={{
           tabBarLabel: 'Account',
-          tabBarIcon: ({ color, size }) => (
-            <TabIcon icon="👤" color={color} size={size} />
+          tabBarIcon: ({ focused, size }) => (
+            <TabIcon name="account" focused={focused} size={size} />
           )
         }}
       />
@@ -187,14 +148,3 @@ export default function TabNavigator({ route }) {
   );
 }
 
-function TabIcon({ icon, color, size }) {
-  return (
-    <Text style={{
-      fontSize: size - 4,
-      color: color,
-      textAlign: 'center'
-    }}>
-      {icon}
-    </Text>
-  );
-}

@@ -1,5 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, SafeAreaView, StatusBar } from 'react-native';
+import Card from '../components/Card';
+import { theme } from '../styles/theme';
 
 export default function AccountScreen({ route, navigation }) {
   const { userInfo } = route.params || {};
@@ -36,12 +38,21 @@ export default function AccountScreen({ route, navigation }) {
     Alert.alert('Support', 'Contact support at support@company.com');
   };
 
+  const getUserInitials = (name) => {
+    if (!name) return 'U';
+    const names = name.split(' ');
+    if (names.length >= 2) {
+      return `${names[0][0]}${names[1][0]}`.toUpperCase();
+    }
+    return name[0].toUpperCase();
+  };
+
   const renderProfileInfo = () => (
-    <View style={styles.profileSection}>
+    <Card style={styles.profileSection} padding="lg">
       <View style={styles.profileHeader}>
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>
-            {userInfo?.name ? userInfo.name.charAt(0).toUpperCase() : 'U'}
+            {getUserInitials(userInfo?.name)}
           </Text>
         </View>
         <View style={styles.profileInfo}>
@@ -49,11 +60,11 @@ export default function AccountScreen({ route, navigation }) {
           <Text style={styles.userEmail}>{userInfo?.email || 'user@company.com'}</Text>
         </View>
       </View>
-    </View>
+    </Card>
   );
 
   const renderAccountDetails = () => (
-    <View style={styles.section}>
+    <Card style={styles.section} padding="lg">
       <Text style={styles.sectionTitle}>Account Details</Text>
 
       <View style={styles.detailItem}>
@@ -61,34 +72,41 @@ export default function AccountScreen({ route, navigation }) {
         <Text style={styles.detailValue}>{userInfo?.sub || 'EMP-12345'}</Text>
       </View>
 
+      <View style={styles.divider} />
+
       <View style={styles.detailItem}>
         <Text style={styles.detailLabel}>Department</Text>
         <Text style={styles.detailValue}>Operations</Text>
       </View>
+
+      <View style={styles.divider} />
 
       <View style={styles.detailItem}>
         <Text style={styles.detailLabel}>Role</Text>
         <Text style={styles.detailValue}>Approval Manager</Text>
       </View>
 
+      <View style={styles.divider} />
+
       <View style={styles.detailItem}>
         <Text style={styles.detailLabel}>Location</Text>
         <Text style={styles.detailValue}>New York, NY</Text>
       </View>
-    </View>
+    </Card>
   );
 
   const renderMenuSection = (title, items) => (
-    <View style={styles.section}>
+    <Card style={styles.section} padding="lg">
       <Text style={styles.sectionTitle}>{title}</Text>
       {items.map((item, index) => (
         <TouchableOpacity
           key={index}
           style={[
             styles.menuItem,
-            index === items.length - 1 && styles.lastMenuItem
+            index > 0 && styles.menuItemWithBorder
           ]}
           onPress={item.onPress}
+          activeOpacity={0.7}
         >
           <Text style={[
             styles.menuItemText,
@@ -99,7 +117,7 @@ export default function AccountScreen({ route, navigation }) {
           <Text style={styles.menuItemArrow}>›</Text>
         </TouchableOpacity>
       ))}
-    </View>
+    </Card>
   );
 
   const securityItems = [
@@ -119,121 +137,137 @@ export default function AccountScreen({ route, navigation }) {
   ];
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {renderProfileInfo()}
-      {renderAccountDetails()}
-      {renderMenuSection('Security', securityItems)}
-      {renderMenuSection('Support', supportItems)}
-      {renderMenuSection('App', appItems)}
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor={theme.colors.background.secondary} />
 
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>Company Approval App v1.0.0</Text>
-      </View>
-    </ScrollView>
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        <View style={styles.content}>
+          {renderProfileInfo()}
+          {renderAccountDetails()}
+          {renderMenuSection('Security', securityItems)}
+          {renderMenuSection('Support', supportItems)}
+          {renderMenuSection('App', appItems)}
+
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>Company Approval App v1.0.0</Text>
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa'
+    backgroundColor: theme.colors.background.secondary
+  },
+  scrollView: {
+    flex: 1
+  },
+  content: {
+    padding: theme.spacing.lg,
+    paddingTop: theme.spacing.xl
   },
   profileSection: {
-    backgroundColor: '#fff',
-    marginBottom: 20
+    marginBottom: theme.spacing.lg
   },
   profileHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
-    padding: 20
+    alignItems: 'center'
   },
   avatar: {
     width: 80,
     height: 80,
-    borderRadius: 40,
-    backgroundColor: '#007bff',
+    borderRadius: theme.borderRadius.full,
+    backgroundColor: theme.colors.primary.main,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 16
+    marginRight: theme.spacing.lg,
+    ...theme.shadows.md
   },
   avatarText: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#fff'
+    fontSize: theme.typography.sizes.xxl,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.text.inverse
   },
   profileInfo: {
     flex: 1
   },
   userName: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#212529',
-    marginBottom: 4
+    fontSize: theme.typography.sizes.xxl,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.text.primary,
+    marginBottom: theme.spacing.xs
   },
   userEmail: {
-    fontSize: 16,
-    color: '#6c757d'
+    fontSize: theme.typography.sizes.md,
+    color: theme.colors.text.secondary,
+    fontWeight: theme.typography.weights.medium
   },
   section: {
-    backgroundColor: '#fff',
-    marginBottom: 20
+    marginBottom: theme.spacing.lg
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#212529',
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 12
+    fontSize: theme.typography.sizes.lg,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.text.primary,
+    marginBottom: theme.spacing.md
   },
   detailItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f8f9fa'
+    paddingVertical: theme.spacing.md
   },
   detailLabel: {
-    fontSize: 16,
-    color: '#495057',
-    fontWeight: '500'
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.text.secondary,
+    fontWeight: theme.typography.weights.medium,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5
   },
   detailValue: {
-    fontSize: 16,
-    color: '#212529'
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.text.primary,
+    fontWeight: theme.typography.weights.medium
+  },
+  divider: {
+    height: 1,
+    backgroundColor: theme.colors.border.light,
+    marginVertical: theme.spacing.xs
   },
   menuItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f8f9fa'
+    paddingVertical: theme.spacing.md
   },
-  lastMenuItem: {
-    borderBottomWidth: 0
+  menuItemWithBorder: {
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.border.light,
+    marginTop: theme.spacing.sm,
+    paddingTop: theme.spacing.md
   },
   menuItemText: {
-    fontSize: 16,
-    color: '#212529'
+    fontSize: theme.typography.sizes.md,
+    color: theme.colors.text.primary,
+    fontWeight: theme.typography.weights.medium
   },
   destructiveText: {
-    color: '#dc3545'
+    color: theme.colors.error.main
   },
   menuItemArrow: {
     fontSize: 20,
-    color: '#6c757d',
+    color: theme.colors.text.tertiary,
     fontWeight: '300'
   },
   footer: {
-    padding: 20,
+    paddingVertical: theme.spacing.xl,
     alignItems: 'center'
   },
   footerText: {
-    fontSize: 14,
-    color: '#6c757d'
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.text.tertiary
   }
 });
